@@ -48,4 +48,24 @@ public class FeatureCollectionEntity {
             private String name;
         }
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCrs(CRSEntity crs) {
+        this.crs = crs;
+    }
+
+    public void setFeatures(List<FeatureEntity> features) {
+        this.features = features;
+    }
 }
