@@ -45,6 +45,18 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
 
+		<!-- Jackson for JSON processing (already included in Spring Boot starter web, but add explicitly if needed) -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<!-- Jackson annotations for custom serialization (if using custom serializers/deserializers) -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+
 		<!-- JUnit 5 -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -69,17 +81,17 @@
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-parameter-names</artifactId>
 		</dependency>
-
 		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
-
-	</dependencies>
-
-	<dependencyManagement>
-	</dependencyManagement>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-netflix-core</artifactId>
+            <version>1.4.3.RELEASE</version>
+        </dependency>
+    </dependencies>
 
 	<!-- Repositories for Spring Cloud -->
 	<repositories>

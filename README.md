@@ -1,4 +1,3 @@
 ### List of APIs used to collect environmental data
 
-- Noise and Air Quality Monitoring API DCC
-- 
+- Google Project Air View Data (Dublin City Council)
