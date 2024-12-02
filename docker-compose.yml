@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  environmental-data-service:
+    image: openjdk:17-jdk-slim
+    container_name: environmental-data-service
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_APPLICATION_NAME=environmental-data-service
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/environmental-data
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=public
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - GEOJSON_URL=https://data.smartdublin.ie/dataset/4976e11e-a015-4ef9-9179-dc7c27fb5a81/resource/ec7f3108-c12b-4e07-b482-470f28f52aca/download/airview_dublincity_roaddata_ugm3.geojson
+    depends_on:
+      - database
+
+  database:
+    image: postgres:15
+    container_name: environmental-data-database
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=environmental-data
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d environmental-data" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
