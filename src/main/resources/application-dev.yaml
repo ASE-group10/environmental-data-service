@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: environmental-data-service
+
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/environmental-data}
+    username: ${SPRING_DATASOURCE_USERNAME:admin}
+    password: ${SPRING_DATASOURCE_PASSWORD:admin}
+    hikari:
+      maximum-pool-size: ${SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE:10}
+      pool-name: ${SPRING_DATASOURCE_POOL_NAME:HikariPool}
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
+
+geojson:
+  url: ${GEOJSON_URL:https://data.smartdublin.ie/dataset/4976e11e-a015-4ef9-9179-dc7c27fb5a81/resource/ec7f3108-c12b-4e07-b482-470f28f52aca/download/airview_dublincity_roaddata_ugm3.geojson}
+
+route:
+  calculation:
+    service:
+      url: ${ROUTE_CALCULATION_SERVICE_URL:https://data.smartdublin.ie/path/to/route-calculation}
+
+logging:
+  level:
+    org:
+      springframework: INFO
+
