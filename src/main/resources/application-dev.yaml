@@ -38,3 +38,9 @@ logging:
     org:
       springframework: INFO
 
+pyroscope:
+  server:
+    address: ${PYROSCOPE_SERVER_ADDRESS}
+  auth:
+    user: ${PYROSCOPE_AUTH_USER}
+    password: ${PYROSCOPE_AUTH_PASSWORD}
