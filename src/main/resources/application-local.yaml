@@ -46,5 +46,5 @@ pyroscope:
     password: ${PYROSCOPE_AUTH_PASSWORD:admin123}
 
 openweather:
-  api: ${OPENWEATHER_API_KEY}
+  apikey: ${OPENWEATHER_API_KEY}
 
