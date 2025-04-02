@@ -1,65 +1,66 @@
 package com.example.environmental_data_service.service;
 
-import com.example.environmental_data_service.model.FeatureCollection;
-import com.example.environmental_data_service.entity.FeatureCollectionEntity;
-import com.example.environmental_data_service.repo.FeatureCollectionRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.example.environmental_data_service.model.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class EnvironmentalDataService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EnvironmentalDataService.class);
-
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
-    private final FeatureCollectionRepository featureCollectionRepository;
 
-    @Value("${geojson.url}")
-    private String geoJsonUrl;
+    @Value("${openweather.apikey}")
+    private String openWeatherApiKey;
 
-    public EnvironmentalDataService(RestTemplate restTemplate, ObjectMapper objectMapper, FeatureCollectionRepository featureCollectionRepository) {
-        this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
-        this.featureCollectionRepository = featureCollectionRepository;
+    public List<AirQualityData> getAirQualityData(List<Waypoint> waypoints) {
+        return waypoints.stream()
+                .map(this::fetchAirQualityForWaypoint)
+                .collect(Collectors.toList());
     }
 
-    @Transactional
-    public void saveGeoJsonData() {
-        try {
-            logger.info("Saving GeoJSON data to the database");
-            FeatureCollection featureCollection = fetchGeoJsonData();
-            FeatureCollectionEntity featureCollectionEntity = convertToFeatureCollectionEntity(featureCollection);
-            featureCollectionRepository.save(featureCollectionEntity);
-            logger.info("GeoJSON data saved successfully");
-        } catch (IOException e) {
-            logger.error("Error saving GeoJSON data", e);
-            throw new RuntimeException("Failed to save GeoJSON data", e);
+    private AirQualityData fetchAirQualityForWaypoint(Waypoint waypoint) {
+        String url = String.format(
+                "http://api.openweathermap.org/data/2.5/air_pollution?lat=%f&lon=%f&appid=%s",
+                waypoint.getLatitude(), waypoint.getLongitude(), openWeatherApiKey
+        );
+
+        ResponseEntity<OpenWeatherResponse> response = restTemplate.getForEntity(url, OpenWeatherResponse.class);
+        return mapToAirQualityIndex(response.getBody(), waypoint);
+    }
+
+    private AirQualityData mapToAirQualityIndex(OpenWeatherResponse response, Waypoint waypoint) {
+        AirQualityData index = new AirQualityData();
+
+        // Set location coordinates from the original waypoint
+        index.setLatitude(waypoint.getLatitude());
+        index.setLongitude(waypoint.getLongitude());
+
+        if (response != null && response.getList() != null && !response.getList().isEmpty()) {
+            OpenWeatherResponse.AirData airData = response.getList().get(0);
+
+            if (airData.getMain() != null) {
+                index.setAqi(airData.getMain().getAqi());
+            }
+
+            if (airData.getComponents() != null) {
+                OpenWeatherResponse.Components components = airData.getComponents();
+                index.setCo(components.getCo());
+                index.setNo(components.getNo());
+                index.setNo2(components.getNo2());
+                index.setO3(components.getO3());
+                index.setSo2(components.getSo2());
+                index.setPm2_5(components.getPm2_5());
+                index.setPm10(components.getPm10());
+                index.setNh3(components.getNh3());
+            }
         }
-    }
-
-    public FeatureCollection fetchGeoJsonData() throws IOException {
-        logger.info("Fetching GeoJSON data from {}", geoJsonUrl);
-        String geoJsonResponse = restTemplate.getForObject(geoJsonUrl, String.class);
-        if (geoJsonResponse == null || geoJsonResponse.isEmpty()) {
-            throw new IllegalStateException("Fetched GeoJSON data is null or empty");
-        }
-        return objectMapper.readValue(geoJsonResponse, FeatureCollection.class);
-    }
-
-    private FeatureCollectionEntity convertToFeatureCollectionEntity(FeatureCollection featureCollection) {
-        // Conversion logic (can be moved to a separate mapper class)
-        FeatureCollectionEntity entity = new FeatureCollectionEntity();
-        entity.setType(featureCollection.getType());
-        entity.setName(featureCollection.getName());
-        // Add conversion of features and CRS...
-        return entity;
+        return index;
     }
 }
