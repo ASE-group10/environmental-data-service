@@ -38,6 +38,19 @@
 			<artifactId>postgresql</artifactId>
 		</dependency>
 
+		<!-- Spring Security OAuth2 Resource Server -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
+
+		<!-- Auth0 Java Client -->
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>auth0</artifactId>
+			<version>1.45.0</version>
+		</dependency>
+		
 		<!-- Spring Boot Starter Test (for testing) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
