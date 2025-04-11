@@ -11,44 +11,56 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PyroscopeBean {
 
-    @Value("${spring.profiles.active}")
     private String activeProfile;
-
-    @Value("${spring.application.name}")
     private String applicationName;
-
-    @Value("${pyroscope.server.address}")
     private String pyroscopeServerAddress;
-
-    @Value("${pyroscope.auth.user}")
     private String pyroscopeServerAuthUser;
-
-    @Value("${pyroscope.auth.password}")
     private String pyroscopeServerAuthPassword;
 
-    public PyroscopeBean() {
+    // Default constructor for Spring to use with @Value
+    public PyroscopeBean(
+            @Value("${spring.profiles.active:default}") String activeProfile,
+            @Value("${spring.application.name:app}") String applicationName,
+            @Value("${pyroscope.server.address:}") String pyroscopeServerAddress,
+            @Value("${pyroscope.auth.user:}") String pyroscopeServerAuthUser,
+            @Value("${pyroscope.auth.password:}") String pyroscopeServerAuthPassword) {
+        this.activeProfile = activeProfile;
+        this.applicationName = applicationName;
+        this.pyroscopeServerAddress = pyroscopeServerAddress;
+        this.pyroscopeServerAuthUser = pyroscopeServerAuthUser;
+        this.pyroscopeServerAuthPassword = pyroscopeServerAuthPassword;
         System.out.println("PyroscopeBean created");
     }
 
     @PostConstruct
     public void init() {
+        // Skip initialization on Windows or in test environment
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.contains("win") || "test".equals(activeProfile)) {
+            System.out.println("Pyroscope is disabled on Windows or in test environment");
+            return;
+        }
 
-//        if (activeProfile.equals("local") || pyroscopeServerAuthUser.isEmpty() || pyroscopeServerAuthPassword.isEmpty()) {
-//            System.out.println("Pyroscope is disabled in local profile");
-//            return;
-//        }
+        // Skip if auth credentials are empty
+        if (pyroscopeServerAuthUser.isEmpty() || pyroscopeServerAuthPassword.isEmpty()) {
+            System.out.println("Pyroscope is disabled due to missing credentials");
+            return;
+        }
 
-        PyroscopeAgent.start(
-                new Config.Builder()
-                        .setApplicationName(applicationName + "-" + activeProfile)
-                        .setProfilingEvent(EventType.ITIMER)
-                        .setProfilingEvent(EventType.CPU)
-                        .setFormat(Format.JFR)
-                        .setServerAddress(pyroscopeServerAddress)
-                        .setBasicAuthUser(pyroscopeServerAuthUser)
-                        .setBasicAuthPassword(pyroscopeServerAuthPassword)
-                        .setProfilingAlloc("512k")
-                        .build()
-        );
+        try {
+            PyroscopeAgent.start(
+                    new Config.Builder()
+                            .setApplicationName(applicationName + "-" + activeProfile)
+                            .setProfilingEvent(EventType.ITIMER)
+                            .setProfilingEvent(EventType.CPU)
+                            .setFormat(Format.JFR)
+                            .setServerAddress(pyroscopeServerAddress)
+                            .setBasicAuthUser(pyroscopeServerAuthUser)
+                            .setBasicAuthPassword(pyroscopeServerAuthPassword)
+                            .setProfilingAlloc("512k")
+                            .build());
+        } catch (Exception e) {
+            System.out.println("Failed to initialize Pyroscope agent: " + e.getMessage());
+        }
     }
 }
