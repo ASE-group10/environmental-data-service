@@ -1,0 +1,24 @@
+# This is a test configuration file
+openweather:
+  apikey: ${OPEN_WEATHER_API_KEY:test-api-key}
+
+# Set a simple H2 database configuration for tests
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  main:
+    allow-bean-definition-overriding: true
+
+# Pyroscope configuration
+pyroscope:
+  enabled: false
+  server:
+    address: mock-address
+  auth:
+    user: mock-user
+    password: mock-password
