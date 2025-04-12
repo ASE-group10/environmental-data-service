@@ -41,7 +41,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
-          path: target/site/jacoco
+          path: target/site/jacoco/*
+          
+      - name: Verify Coverage Report Path
+        run: |
+          if [ ! -d "target/site/jacoco" ] || [ -z "$(ls -A target/site/jacoco)" ]; then
+            echo "Coverage report directory is missing or empty."
+            exit 1
+          fi
 
 
       - name: Cache SonarQube Packages
