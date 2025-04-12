@@ -13,55 +13,47 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for better analysis relevancy
+          fetch-depth: 0  # Use full history for better analysis
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
+      
       - name: Verify Java Versions
         run: |
           java --version
           javac --version
-      - name: Verify Coverage Report Path
+
+      - name: Build Project and Generate Coverage Report
+        run: mvn clean verify jacoco:report
+
+      - name: Debug List Target Directory
         run: |
           echo "---- Debug Info: Listing 'target' directory contents ----"
           ls -la target || echo "No 'target' directory found."
-          echo "---- Debug Info: Listing 'target/jacoco' directory contents ----"
-          ls -la target/jacoco 2>/dev/null || echo "'target/jacoco' directory not found."
-          echo "---- Checking for 'target/jacoco' directory existence ----"
-          if [ ! -d "target/jacoco" ]; then
-            echo "ERROR: Coverage report directory 'target/jacoco' does not exist. Please ensure that the coverage report is generated (e.g. via jacoco:report)."
+          echo "---- Debug Info: Listing 'target/site/jacoco' directory contents ----"
+          ls -la target/site/jacoco 2>/dev/null || echo "'target/site/jacoco' directory not found."
+
+      - name: Verify Coverage Report Path
+        run: |
+          echo "---- Checking for 'target/site/jacoco' directory existence ----"
+          if [ ! -d "target/site/jacoco" ] || [ -z "$(ls -A target/site/jacoco)" ]; then
+            echo "ERROR: Coverage report directory 'target/site/jacoco' is missing or empty."
             exit 1
           else
-            echo "SUCCESS: Coverage report directory 'target/jacoco' exists."
+            echo "SUCCESS: Coverage report directory 'target/site/jacoco' exists and has content."
           fi
-      - name: Cache Maven Packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}-force-refresh
-          restore-keys: ${{ runner.os }}-m2
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: target/site/jacoco/*
-        continue-on-error: false  # Ensure this step fails the workflow if it cannot fetch the action
-          
-      - name: Verify Coverage Report Path
-        run: |
-          if [ ! -d "target/site/jacoco" ] || [ -z "$(ls -A target/site/jacoco)" ]; then
-            echo "Coverage report directory is missing or empty."
-            exit 1
-          fi
-        continue-on-error: false
 
       - name: List Coverage Files
-        run: ls -R target/site/jacoco || echo "No files found"
-
+        run: ls -R target/site/jacoco || echo "No coverage files found."
 
       - name: Cache SonarQube Packages
         uses: actions/cache@v3
@@ -77,12 +69,9 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Run Tests
-        run: mvn test
-
       - name: Build and SonarQube Analysis
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Provided automatically
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Environmental-Service-Check
