@@ -26,7 +26,7 @@ jobs:
           javac --version
       - name: Verify Coverage Report Path
         run: |
-          if [ ! -d "target/site/jacoco" ]; then
+          if [ ! -d "target/jacoco" ]; then
             echo "Coverage report directory does not exist."
             exit 1
           fi
