@@ -23,7 +23,7 @@ jobs:
       - name: Verify Java Versions
         run: |
           java --version
-          javac --version- name: Verify Coverage Report Path
+          javac --version
       - name: Verify Coverage Report Path
         run: |
           echo "---- Debug Info: Listing 'target' directory contents ----"
