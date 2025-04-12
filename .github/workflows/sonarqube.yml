@@ -23,12 +23,19 @@ jobs:
       - name: Verify Java Versions
         run: |
           java --version
-          javac --version
+          javac --version- name: Verify Coverage Report Path
       - name: Verify Coverage Report Path
         run: |
+          echo "---- Debug Info: Listing 'target' directory contents ----"
+          ls -la target || echo "No 'target' directory found."
+          echo "---- Debug Info: Listing 'target/jacoco' directory contents ----"
+          ls -la target/jacoco 2>/dev/null || echo "'target/jacoco' directory not found."
+          echo "---- Checking for 'target/jacoco' directory existence ----"
           if [ ! -d "target/jacoco" ]; then
-            echo "Coverage report directory does not exist."
+            echo "ERROR: Coverage report directory 'target/jacoco' does not exist. Please ensure that the coverage report is generated (e.g. via jacoco:report)."
             exit 1
+          else
+            echo "SUCCESS: Coverage report directory 'target/jacoco' exists."
           fi
       - name: Cache Maven Packages
         uses: actions/cache@v3
