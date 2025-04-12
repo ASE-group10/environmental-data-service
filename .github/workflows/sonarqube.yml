@@ -24,6 +24,13 @@ jobs:
         run: |
           java --version
           javac --version
+      - name: Generate Coverage Report
+        run: mvn jacoco:report
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: target/site/jacoco
 
 
       - name: Cache SonarQube Packages
