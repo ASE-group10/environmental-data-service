@@ -30,6 +30,12 @@ jobs:
             echo "Coverage report directory does not exist."
             exit 1
           fi
+      - name: Cache Maven Packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}-force-refresh
+          restore-keys: ${{ runner.os }}-m2
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v3
