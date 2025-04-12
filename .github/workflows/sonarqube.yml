@@ -20,6 +20,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - name: Verify Java Versions
+        run: |
+          java --version
+          javac --version
+
 
       - name: Cache SonarQube Packages
         uses: actions/cache@v3
