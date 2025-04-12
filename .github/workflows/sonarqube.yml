@@ -24,8 +24,13 @@ jobs:
         run: |
           java --version
           javac --version
-      - name: Generate Coverage Report
-        run: mvn jacoco:report
+      - name: Verify Coverage Report Path
+        run: |
+          if [ ! -d "target/site/jacoco" ]; then
+            echo "Coverage report directory does not exist."
+            exit 1
+          fi
+
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v3
         with:
