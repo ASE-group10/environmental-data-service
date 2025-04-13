@@ -4,9 +4,6 @@ import com.example.environmental_data_service.model.OpenWeatherResponse.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
-
-import java.util.function.Consumer;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class OpenWeatherResponseTest {

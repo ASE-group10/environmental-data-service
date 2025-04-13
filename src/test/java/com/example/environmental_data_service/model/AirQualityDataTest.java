@@ -7,69 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AirQualityDataTest {
 
-    @Test
-    void testAirQualityDataSettersAndGetters() {
-        AirQualityData data = new AirQualityData();
-        data.setLatitude(53.3498);
-        data.setLongitude(-6.2603);
-        data.setAqi(2);
-        data.setCo(0.5);
-        data.setNo(0.1);
-        data.setNo2(0.2);
-        data.setO3(0.3);
-        data.setSo2(0.4);
-        data.setPm2_5(0.6);
-        data.setPm10(0.7);
-        data.setNh3(0.8);
-
-        assertEquals(53.3498, data.getLatitude());
-        assertEquals(-6.2603, data.getLongitude());
-        assertEquals(2, data.getAqi());
-        assertEquals(0.5, data.getCo());
-        assertEquals(0.1, data.getNo());
-        assertEquals(0.2, data.getNo2());
-        assertEquals(0.3, data.getO3());
-        assertEquals(0.4, data.getSo2());
-        assertEquals(0.6, data.getPm2_5());
-        assertEquals(0.7, data.getPm10());
-        assertEquals(0.8, data.getNh3());
-    }
-
-    @Test
-    void testEqualsAndHashCode() {
-        AirQualityData data1 = new AirQualityData();
-        data1.setAqi(3);
-        data1.setLatitude(1.1);
-        data1.setLongitude(2.2);
-
-        AirQualityData data2 = new AirQualityData();
-        data2.setAqi(3);
-        data2.setLatitude(1.1);
-        data2.setLongitude(2.2);
-
-        assertEquals(data1, data2);
-        assertEquals(data2.hashCode(), data1.hashCode());
-
-        data2.setAqi(5);
-        assertNotEquals(data1, data2);
-    }
-
-    @Test
-    void testEqualsWithNullAndDifferentClass() {
-        AirQualityData data = new AirQualityData();
-        assertNotEquals(null, data);
-        assertNotEquals(data, new Object());
-    }
-
-    @Test
-    void testToStringNotNull() {
-        AirQualityData data = new AirQualityData();
-        data.setAqi(1);
-        String stringRep = data.toString();
-        assertNotNull(stringRep);
-        assertTrue(stringRep.contains("aqi=1"));
-    }
-
     @Data
     static class SubAirQualityData extends AirQualityData {
         @Override
@@ -124,4 +61,134 @@ class AirQualityDataTest {
         assertTrue(data1.canEqual(data2));
     }
 
+    private AirQualityData createSampleData() {
+        AirQualityData data = new AirQualityData();
+        data.setLatitude(53.3498);
+        data.setLongitude(-6.2603);
+        data.setAqi(2);
+        data.setCo(0.5);
+        data.setNo(0.1);
+        data.setNo2(0.2);
+        data.setO3(0.3);
+        data.setSo2(0.4);
+        data.setPm2_5(0.6);
+        data.setPm10(0.7);
+        data.setNh3(0.8);
+        return data;
+    }
+
+    @Test
+    void testAirQualityDataSettersAndGetters() {
+        AirQualityData data = createSampleData();
+
+        assertEquals(53.3498, data.getLatitude());
+        assertEquals(-6.2603, data.getLongitude());
+        assertEquals(2, data.getAqi());
+        assertEquals(0.5, data.getCo());
+        assertEquals(0.1, data.getNo());
+        assertEquals(0.2, data.getNo2());
+        assertEquals(0.3, data.getO3());
+        assertEquals(0.4, data.getSo2());
+        assertEquals(0.6, data.getPm2_5());
+        assertEquals(0.7, data.getPm10());
+        assertEquals(0.8, data.getNh3());
+    }
+
+    @Test
+    void testEqualsAndHashCode() {
+        AirQualityData data1 = createSampleData();
+        AirQualityData data2 = createSampleData();
+
+        assertEquals(data1, data2);
+        assertEquals(data1.hashCode(), data2.hashCode());
+
+        data2.setAqi(5);
+        assertNotEquals(data1, data2);
+    }
+
+    @Test
+    void testEqualsWithNullAndDifferentClass() {
+        AirQualityData data = new AirQualityData();
+        assertNotEquals(null, data);
+        assertNotEquals(new Object(), data);
+    }
+
+    @Test
+    void testToStringNotNull() {
+        AirQualityData data = createSampleData();
+        String stringRep = data.toString();
+        assertNotNull(stringRep);
+        // Check all fields are present in toString
+        assertTrue(stringRep.contains("latitude=53.3498"));
+        assertTrue(stringRep.contains("longitude=-6.2603"));
+        assertTrue(stringRep.contains("aqi=2"));
+        assertTrue(stringRep.contains("co=0.5"));
+        // Repeat for other fields...
+    }
+
+    // Tests for each field's impact on equals
+    @Test
+    void testEqualsWhenCoDifferent() {
+        AirQualityData data1 = createSampleData();
+        AirQualityData data2 = createSampleData();
+        data2.setCo(0.9);
+        assertNotEquals(data1, data2);
+    }
+
+    @Test
+    void testEqualsWhenNoDifferent() {
+        AirQualityData data1 = createSampleData();
+        AirQualityData data2 = createSampleData();
+        data2.setNo(0.9);
+        assertNotEquals(data1, data2);
+    }
+
+    // Repeat similar tests for no2, o3, so2, pm2_5, pm10, nh3
+    @Test
+    void testEqualsWhenNo2Different() {
+        AirQualityData data1 = createSampleData();
+        AirQualityData data2 = createSampleData();
+        data2.setNo2(0.9);
+        assertNotEquals(data1, data2);
+    }
+
+    @Test
+    void testEqualsWhenO3Different() {
+        AirQualityData data1 = createSampleData();
+        AirQualityData data2 = createSampleData();
+        data2.setO3(0.9);
+        assertNotEquals(data1, data2);
+    }
+
+    @Test
+    void testEqualsWhenSo2Different() {
+        AirQualityData data1 = createSampleData();
+        AirQualityData data2 = createSampleData();
+        data2.setSo2(0.9);
+        assertNotEquals(data1, data2);
+    }
+
+    @Test
+    void testEqualsWhenPm2_5Different() {
+        AirQualityData data1 = createSampleData();
+        AirQualityData data2 = createSampleData();
+        data2.setPm2_5(0.9);
+        assertNotEquals(data1, data2);
+    }
+
+    @Test
+    void testEqualsWhenPm10Different() {
+        AirQualityData data1 = createSampleData();
+        AirQualityData data2 = createSampleData();
+        data2.setPm10(0.9);
+        assertNotEquals(data1, data2);
+    }
+
+    @Test
+    void testEqualsWhenNh3Different() {
+        AirQualityData data1 = createSampleData();
+        AirQualityData data2 = createSampleData();
+        data2.setNh3(0.9);
+        assertNotEquals(data1, data2);
+    }
 }
