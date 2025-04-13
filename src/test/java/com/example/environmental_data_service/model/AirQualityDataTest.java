@@ -2,9 +2,10 @@ package com.example.environmental_data_service.model;
 
 import lombok.Data;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AirQualityDataTest {
+class AirQualityDataTest {
 
     @Test
     void testAirQualityDataSettersAndGetters() {
@@ -46,11 +47,9 @@ public class AirQualityDataTest {
         data2.setLatitude(1.1);
         data2.setLongitude(2.2);
 
-        // Standard equality
         assertEquals(data1, data2);
         assertEquals(data1.hashCode(), data2.hashCode());
 
-        // Change one value and test inequality
         data2.setAqi(5);
         assertNotEquals(data1, data2);
     }
@@ -71,7 +70,6 @@ public class AirQualityDataTest {
         assertTrue(stringRep.contains("aqi=1"));
     }
 
-    // Using an annotated subclass to force Lombok to generate equals/canEqual for the subclass.
     @Data
     static class SubAirQualityData extends AirQualityData {
         @Override
@@ -88,9 +86,7 @@ public class AirQualityDataTest {
         SubAirQualityData sub = new SubAirQualityData();
         sub.setAqi(10);
 
-        // Because the subclass’s equals (generated via @Data) now checks that the other is a SubAirQualityData,
-        // we expect the comparisons to return false.
-        assertFalse(base.equals(sub), "Expected base.equals(sub) to be false when subclass overrides canEqual()");
-        assertFalse(sub.equals(base), "Expected sub.equals(base) to be false when subclass overrides canEqual()");
+        assertNotEquals(base, sub);
+        assertNotEquals(sub, base);
     }
 }

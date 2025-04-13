@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-public class OpenWeatherResponseTest {
+class OpenWeatherResponseTest {
 
     final ObjectMapper mapper = new ObjectMapper();
 
@@ -124,7 +122,6 @@ public class OpenWeatherResponseTest {
         assertNotEquals(comp1, comp3);
     }
 
-    // ✨ Force Lombok-generated canEqual to return false by subclassing
     @Data
     static class SubCoord extends Coord {
         @Override public boolean canEqual(Object other) { return false; }
@@ -135,7 +132,7 @@ public class OpenWeatherResponseTest {
         Coord base = new Coord(); base.setLat(1); base.setLon(2);
         SubCoord sub = new SubCoord(); sub.setLat(1); sub.setLon(2);
 
-        assertFalse(base.equals(sub));
-        assertFalse(sub.equals(base));
+        assertNotEquals(base, sub);
+        assertNotEquals(sub, base);
     }
 }

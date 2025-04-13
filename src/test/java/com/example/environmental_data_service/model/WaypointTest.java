@@ -2,9 +2,10 @@ package com.example.environmental_data_service.model;
 
 import lombok.Data;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class WaypointTest {
+class WaypointTest {
 
     @Test
     void testNoArgsConstructorAndSetters() {
@@ -29,10 +30,8 @@ public class WaypointTest {
         Waypoint wp2 = new Waypoint(10.0, 20.0);
         Waypoint wp3 = new Waypoint(99.9, 99.9);
 
-        // Test equality and hashCode for same values
         assertEquals(wp1, wp2);
         assertEquals(wp1.hashCode(), wp2.hashCode());
-        // And inequality with different values
         assertNotEquals(wp1, wp3);
     }
 
@@ -51,12 +50,12 @@ public class WaypointTest {
         assertTrue(stringRep.contains("latitude=1.0"));
     }
 
-    // Use an annotated subclass to force Lombok generation of equals/canEqual
     @Data
     static class SubWaypoint extends Waypoint {
         public SubWaypoint(double latitude, double longitude) {
             super(latitude, longitude);
         }
+
         @Override
         public boolean canEqual(Object other) {
             return false;
@@ -67,7 +66,8 @@ public class WaypointTest {
     void testEqualsFailsWhenSubclassOverridesCanEqual() {
         Waypoint base = new Waypoint(5.0, 5.0);
         SubWaypoint sub = new SubWaypoint(5.0, 5.0);
-        assertFalse(base.equals(sub), "Expected base.equals(sub) to be false when subclass overrides canEqual()");
-        assertFalse(sub.equals(base), "Expected sub.equals(base) to be false when subclass overrides canEqual()");
+
+        assertNotEquals(base, sub);
+        assertNotEquals(sub, base);
     }
 }
