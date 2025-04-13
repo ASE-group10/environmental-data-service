@@ -31,7 +31,7 @@ class WaypointTest {
         Waypoint wp3 = new Waypoint(99.9, 99.9);
 
         // Reflexive
-        assertTrue(wp1.equals(wp1));
+        assertEquals(wp1, wp1);
 
         // Symmetric
         assertEquals(wp1, wp2);
@@ -41,10 +41,10 @@ class WaypointTest {
         assertNotEquals(wp1, wp3);
 
         // Null
-        assertNotEquals(wp1, null);
+        assertNotEquals(null, wp1);
 
         // Cross-type comparison (avoids linter warning)
-        assertFalse(wp1.equals((Object) "notAWaypoint"));
+        assertNotEquals((Object) "notAWaypoint", wp1);
 
         // Explicit canEqual true branch
         assertTrue(wp1.canEqual(wp2));

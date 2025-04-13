@@ -137,45 +137,37 @@ class OpenWeatherResponseTest {
     }
 
     @Test
-    void testEquality_hashCode_toString_allBranches() {
-        // Coord
-        Coord coord1 = new Coord();
-        coord1.setLon(1.0);
-        coord1.setLat(2.0);
+    void testCoordEqualityBranches() {
+        Coord c1 = new Coord(); c1.setLon(1.0); c1.setLat(2.0);
+        Coord c2 = new Coord(); c2.setLon(1.0); c2.setLat(2.0);
+        Coord c3 = new Coord(); c3.setLon(9.0); c3.setLat(9.0);
 
-        Coord coord2 = new Coord();
-        coord2.setLon(1.0);
-        coord2.setLat(2.0);
+        assertEquals(c1, c2);
+        assertEquals(c1.hashCode(), c2.hashCode());
+        assertNotEquals(c1, c3);
+        assertNotEquals(null, c1);
+        assertNotEquals(new Object(), c1);
+        assertTrue(c1.canEqual(c2));
+        assertNotNull(c1.toString());
+    }
 
-        Coord coordDiff = new Coord();
-        coordDiff.setLon(9.0);
-        coordDiff.setLat(9.0);
+    @Test
+    void testMainEqualityBranches() {
+        Main m1 = new Main(); m1.setAqi(5);
+        Main m2 = new Main(); m2.setAqi(5);
+        Main m3 = new Main(); m3.setAqi(10);
 
-        assertEquals(coord1, coord2);
-        assertEquals(coord1.hashCode(), coord2.hashCode());
-        assertNotEquals(coord1, coordDiff);
-        assertNotEquals(null, coord1);
-        assertNotEquals(new Object(), coord1);  // cross-type
-        assertTrue(coord1.canEqual(coord2));
-        assertNotNull(coord1.toString());
+        assertEquals(m1, m2);
+        assertEquals(m1.hashCode(), m2.hashCode());
+        assertNotEquals(m1, m3);
+        assertNotEquals(null, m1);
+        assertNotEquals(new Object(), m1);
+        assertTrue(m1.canEqual(m2));
+        assertNotNull(m1.toString());
+    }
 
-        // Main
-        Main main1 = new Main();
-        main1.setAqi(5);
-        Main main2 = new Main();
-        main2.setAqi(5);
-        Main main3 = new Main();
-        main3.setAqi(10);
-
-        assertEquals(main1, main2);
-        assertEquals(main1.hashCode(), main2.hashCode());
-        assertNotEquals(main1, main3);
-        assertNotEquals(null, main1);
-        assertNotEquals(new Object(), main1);
-        assertTrue(main1.canEqual(main2));
-        assertNotNull(main1.toString());
-
-        // Components
+    @Test
+    void testComponentsEqualityBranches() {
         Components comp1 = new Components();
         comp1.setCo(1.0); comp1.setNo(2.0); comp1.setNo2(3.0); comp1.setO3(4.0);
         comp1.setSo2(5.0); comp1.setPm2_5(6.0); comp1.setPm10(7.0); comp1.setNh3(8.0);
@@ -193,17 +185,18 @@ class OpenWeatherResponseTest {
         assertNotEquals(new Object(), comp1);
         assertTrue(comp1.canEqual(comp2));
         assertNotNull(comp1.toString());
+    }
 
-        // AirData
+    @Test
+    void testAirDataEqualityBranches() {
+        Main main = new Main(); main.setAqi(3);
+        Components comp = new Components(); comp.setPm10(10.0);
+
         AirData air1 = new AirData();
-        air1.setDt(123L);
-        air1.setMain(main1);
-        air1.setComponents(comp1);
+        air1.setMain(main); air1.setComponents(comp); air1.setDt(123L);
 
         AirData air2 = new AirData();
-        air2.setDt(123L);
-        air2.setMain(main1);
-        air2.setComponents(comp1);
+        air2.setMain(main); air2.setComponents(comp); air2.setDt(123L);
 
         AirData air3 = new AirData(); // different
 
@@ -215,6 +208,7 @@ class OpenWeatherResponseTest {
         assertTrue(air1.canEqual(air2));
         assertNotNull(air1.toString());
     }
+
 
     @Test
     void testAirDataMethods_fullCoverage() {
