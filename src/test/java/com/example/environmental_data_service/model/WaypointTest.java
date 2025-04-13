@@ -83,8 +83,9 @@ class WaypointTest {
     void testCanEqualCalledFromSubclass() {
         Waypoint base = new Waypoint(5.0, 5.0);
         SubWaypoint sub = new SubWaypoint(5.0, 5.0);
+        boolean result = sub.equals(base);
 
-        // This triggers `SubWaypoint.canEqual(Waypoint)` path
-        sub.equals(base);  // the result is irrelevant; we just want to trigger the call
+        assertFalse(result);
     }
+
 }
