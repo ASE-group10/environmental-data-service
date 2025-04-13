@@ -31,14 +31,14 @@ class WaypointTest {
         Waypoint wp3 = new Waypoint(99.9, 99.9);
 
         assertEquals(wp1, wp2);
-        assertEquals(wp1.hashCode(), wp2.hashCode());
+        assertEquals(wp2.hashCode(), wp1.hashCode());
         assertNotEquals(wp1, wp3);
     }
 
     @Test
     void testEqualsWithNullAndDifferentClass() {
         Waypoint wp = new Waypoint(1, 1);
-        assertNotEquals(wp, null);
+        assertNotEquals(null, wp);
         assertNotEquals(wp, new Object());
     }
 

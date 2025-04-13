@@ -48,7 +48,7 @@ class AirQualityDataTest {
         data2.setLongitude(2.2);
 
         assertEquals(data1, data2);
-        assertEquals(data1.hashCode(), data2.hashCode());
+        assertEquals(data2.hashCode(), data1.hashCode());
 
         data2.setAqi(5);
         assertNotEquals(data1, data2);
@@ -57,7 +57,7 @@ class AirQualityDataTest {
     @Test
     void testEqualsWithNullAndDifferentClass() {
         AirQualityData data = new AirQualityData();
-        assertNotEquals(data, null);
+        assertNotEquals(null, data);
         assertNotEquals(data, new Object());
     }
 
