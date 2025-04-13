@@ -219,4 +219,27 @@ public class EnvironmentalDataServiceTest {
 
         return response;
     }
+
+    @Test
+    void testGetAirQualityData_NullListInResponse() {
+        // Arrange
+        Waypoint waypoint = new Waypoint(51.5074, -0.1278);
+
+        OpenWeatherResponse responseWithNullList = new OpenWeatherResponse();
+        responseWithNullList.setList(null); // Simulate null list
+
+        when(restTemplate.getForEntity(anyString(), eq(OpenWeatherResponse.class)))
+                .thenReturn(new ResponseEntity<>(responseWithNullList, HttpStatus.OK));
+
+        // Act
+        List<AirQualityData> result = environmentalDataService.getAirQualityData(Collections.singletonList(waypoint));
+
+        // Assert
+        assertEquals(1, result.size());
+        AirQualityData data = result.get(0);
+        assertEquals(0, data.getAqi()); // default
+        assertEquals(waypoint.getLatitude(), data.getLatitude());
+        assertEquals(waypoint.getLongitude(), data.getLongitude());
+    }
+
 }

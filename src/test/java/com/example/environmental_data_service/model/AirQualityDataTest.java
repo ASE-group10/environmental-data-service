@@ -89,4 +89,39 @@ class AirQualityDataTest {
         assertNotEquals(base, sub);
         assertNotEquals(sub, base);
     }
+
+    @Test
+    void testFullEqualsBranches() {
+        AirQualityData data1 = new AirQualityData();
+        data1.setLatitude(1.0);
+        data1.setLongitude(2.0);
+        data1.setAqi(5);
+
+        // Reflexive check
+        assertEquals(data1, data1);
+
+        // Symmetric check with same values
+        AirQualityData data2 = new AirQualityData();
+        data2.setLatitude(1.0);
+        data2.setLongitude(2.0);
+        data2.setAqi(5);
+        assertEquals(data1, data2);
+
+        // At least one different field
+        AirQualityData data3 = new AirQualityData();
+        data3.setLatitude(9.9); // different
+        data3.setLongitude(2.0);
+        data3.setAqi(5);
+        assertNotEquals(data1, data3);
+
+        // null comparison (already tested, but safe to keep)
+        assertNotEquals(null, data1);
+
+        // Cross-type comparison
+        assertNotEquals((Object) "notAirQualityData", data1);
+
+        // canEqual returning true explicitly (same type)
+        assertTrue(data1.canEqual(data2));
+    }
+
 }

@@ -135,4 +135,137 @@ class OpenWeatherResponseTest {
         assertNotEquals(base, sub);
         assertNotEquals(sub, base);
     }
+
+    @Test
+    void testEquality_hashCode_toString_allBranches() {
+        // Coord
+        Coord coord1 = new Coord();
+        coord1.setLon(1.0);
+        coord1.setLat(2.0);
+
+        Coord coord2 = new Coord();
+        coord2.setLon(1.0);
+        coord2.setLat(2.0);
+
+        Coord coordDiff = new Coord();
+        coordDiff.setLon(9.0);
+        coordDiff.setLat(9.0);
+
+        assertEquals(coord1, coord2);
+        assertEquals(coord1.hashCode(), coord2.hashCode());
+        assertNotEquals(coord1, coordDiff);
+        assertNotEquals(null, coord1);
+        assertNotEquals(new Object(), coord1);  // cross-type
+        assertTrue(coord1.canEqual(coord2));
+        assertNotNull(coord1.toString());
+
+        // Main
+        Main main1 = new Main();
+        main1.setAqi(5);
+        Main main2 = new Main();
+        main2.setAqi(5);
+        Main main3 = new Main();
+        main3.setAqi(10);
+
+        assertEquals(main1, main2);
+        assertEquals(main1.hashCode(), main2.hashCode());
+        assertNotEquals(main1, main3);
+        assertNotEquals(null, main1);
+        assertNotEquals(new Object(), main1);
+        assertTrue(main1.canEqual(main2));
+        assertNotNull(main1.toString());
+
+        // Components
+        Components comp1 = new Components();
+        comp1.setCo(1.0); comp1.setNo(2.0); comp1.setNo2(3.0); comp1.setO3(4.0);
+        comp1.setSo2(5.0); comp1.setPm2_5(6.0); comp1.setPm10(7.0); comp1.setNh3(8.0);
+
+        Components comp2 = new Components();
+        comp2.setCo(1.0); comp2.setNo(2.0); comp2.setNo2(3.0); comp2.setO3(4.0);
+        comp2.setSo2(5.0); comp2.setPm2_5(6.0); comp2.setPm10(7.0); comp2.setNh3(8.0);
+
+        Components comp3 = new Components(); // different values
+
+        assertEquals(comp1, comp2);
+        assertEquals(comp1.hashCode(), comp2.hashCode());
+        assertNotEquals(comp1, comp3);
+        assertNotEquals(null, comp1);
+        assertNotEquals(new Object(), comp1);
+        assertTrue(comp1.canEqual(comp2));
+        assertNotNull(comp1.toString());
+
+        // AirData
+        AirData air1 = new AirData();
+        air1.setDt(123L);
+        air1.setMain(main1);
+        air1.setComponents(comp1);
+
+        AirData air2 = new AirData();
+        air2.setDt(123L);
+        air2.setMain(main1);
+        air2.setComponents(comp1);
+
+        AirData air3 = new AirData(); // different
+
+        assertEquals(air1, air2);
+        assertEquals(air1.hashCode(), air2.hashCode());
+        assertNotEquals(air1, air3);
+        assertNotEquals(null, air1);
+        assertNotEquals(new Object(), air1);
+        assertTrue(air1.canEqual(air2));
+        assertNotNull(air1.toString());
+    }
+
+    @Test
+    void testAirDataMethods_fullCoverage() {
+        Main main = new Main(); main.setAqi(3);
+        Components components = new Components(); components.setPm10(10.0);
+
+        AirData air1 = new AirData();
+        air1.setMain(main);
+        air1.setComponents(components);
+        air1.setDt(123L);
+
+        assertEquals(main, air1.getMain());
+        assertEquals(components, air1.getComponents());
+        assertEquals(123L, air1.getDt());
+
+        AirData air2 = new AirData();
+        air2.setMain(main);
+        air2.setComponents(components);
+        air2.setDt(123L);
+
+        AirData airDiff = new AirData();
+        airDiff.setMain(new Main()); // different values
+
+        assertEquals(air1, air2);
+        assertEquals(air1.hashCode(), air2.hashCode());
+        assertNotEquals(air1, airDiff);
+        assertNotEquals(null, air1);
+        assertNotEquals(new Object(), air1);
+
+        assertTrue(air1.canEqual(air2));
+        assertNotNull(air1.toString());
+    }
+
+    @Data
+    static class SubAirData extends AirData {
+        @Override
+        public boolean canEqual(Object other) {
+            return false;
+        }
+    }
+
+    @Test
+    void testCanEqualBranch_airData() {
+        AirData air = new AirData();
+        air.setDt(1L);
+
+        SubAirData sub = new SubAirData();
+        sub.setDt(1L);
+
+        assertNotEquals(air, sub);
+        assertNotEquals(sub, air);
+    }
+
 }
