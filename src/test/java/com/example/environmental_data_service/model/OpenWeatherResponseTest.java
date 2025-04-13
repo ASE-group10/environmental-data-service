@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 
+import java.util.function.Consumer;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class OpenWeatherResponseTest {
@@ -262,4 +264,123 @@ class OpenWeatherResponseTest {
         assertNotEquals(sub, air);
     }
 
+    @Test
+    void testCoordEquality_withDifferentFields() {
+        Coord base = new Coord();
+        base.setLon(1.0);
+        base.setLat(2.0);
+
+        Coord same = new Coord();
+        same.setLon(1.0);
+        same.setLat(2.0);
+
+        Coord diffLon = new Coord();
+        diffLon.setLon(9.0);
+        diffLon.setLat(2.0);
+
+        Coord diffLat = new Coord();
+        diffLat.setLon(1.0);
+        diffLat.setLat(9.0);
+
+        assertEquals(base, same);
+        assertNotEquals(base, diffLon);
+        assertNotEquals(base, diffLat);
+    }
+
+    @Test
+    void testMainEquality_withDifferentAqi() {
+        Main m1 = new Main();
+        m1.setAqi(1);
+
+        Main m2 = new Main();
+        m2.setAqi(1);
+
+        Main m3 = new Main();
+        m3.setAqi(2);
+
+        assertEquals(m1, m2);
+        assertNotEquals(m1, m3);
+    }
+
+    @Test
+    void testAirDataEquality_withDifferentFields() {
+        Main main = new Main();
+        main.setAqi(2);
+
+        Components components = new Components();
+        components.setCo(1.0);
+
+        AirData base = new AirData();
+        base.setMain(main);
+        base.setComponents(components);
+        base.setDt(123L);
+
+        AirData same = new AirData();
+        same.setMain(main);
+        same.setComponents(components);
+        same.setDt(123L);
+
+        AirData diffMain = new AirData();
+        diffMain.setMain(new Main()); // Default aqi=0
+        diffMain.setComponents(components);
+        diffMain.setDt(123L);
+
+        AirData diffComponents = new AirData();
+        diffComponents.setMain(main);
+        diffComponents.setComponents(new Components()); // All fields 0.0
+        diffComponents.setDt(123L);
+
+        AirData diffDt = new AirData();
+        diffDt.setMain(main);
+        diffDt.setComponents(components);
+        diffDt.setDt(456L);
+
+        assertEquals(base, same);
+        assertNotEquals(base, diffMain);
+        assertNotEquals(base, diffComponents);
+        assertNotEquals(base, diffDt);
+    }
+
+    @Test
+    void testEqualsWithNullFields() {
+        AirData air1 = new AirData();
+        air1.setMain(null);
+        air1.setComponents(null);
+        air1.setDt(null);
+
+        AirData air2 = new AirData();
+        air2.setMain(new Main());
+        air2.setComponents(new Components());
+        air2.setDt(123L);
+
+        assertNotEquals(air1, air2);
+    }
+
+    @Test
+    void testEqualsWithSelf() {
+        Coord coord = new Coord();
+        assertEquals(coord, coord);
+
+        Main main = new Main();
+        assertEquals(main, main);
+
+        Components components = new Components();
+        assertEquals(components, components);
+
+        AirData airData = new AirData();
+        assertEquals(airData, airData);
+    }
+
+    @Test
+    void testHashCodeConsistency() {
+        Coord coord1 = new Coord();
+        coord1.setLon(1.0);
+        coord1.setLat(2.0);
+
+        Coord coord2 = new Coord();
+        coord2.setLon(1.0);
+        coord2.setLat(2.0);
+
+        assertEquals(coord1.hashCode(), coord2.hashCode());
+    }
 }
